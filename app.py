@@ -3,8 +3,6 @@ from flask_cors import CORS
 
 import routes
 from models import *
-from models.notification import Notification
-from services.notification_service import EmailNotificationService
 
 
 def create_app():
