@@ -13,13 +13,13 @@ ordersBlueprint = Blueprint('orders', __name__, url_prefix='/orders')
 @ordersBlueprint.route('/', methods=['GET'])
 def get_orders():
     orders = Order.query.all()
-    return jsonify({'orders': [order.serialize() for order in orders]})
+    return jsonify({'orders': [order.to_dict() for order in orders]})
 
 
 @ordersBlueprint.route('/<int:order_id>', methods=['GET'])
 def get_order(order_id):
     order = Order.query.get_or_404(order_id)
-    return jsonify(order.serialize())
+    return jsonify(order.to_dict())
 
 
 def subtract_percent(number, percent):

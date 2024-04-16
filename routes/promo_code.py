@@ -8,7 +8,7 @@ promoCodesBlueprint = Blueprint('promo_codes', __name__, url_prefix='/promo-code
 @promoCodesBlueprint.route('/', methods=['GET'])
 def get_promo_codes():
     promo_codes = PromoCode.query.all()
-    return jsonify({'promo_codes': [promo.serialize() for promo in promo_codes]})
+    return jsonify({'promo_codes': [promo.to_dict() for promo in promo_codes]})
 
 
 @promoCodesBlueprint.route('/<promoCode>', methods=['GET'])
