@@ -8,10 +8,15 @@ productsBlueprint = Blueprint('products', __name__, url_prefix='/products')
 
 @productsBlueprint.route('/', methods=['GET'])
 def get_products():
+    query = Product.query.where(Product.in_store)
+    search = request.args.get('q')
+    if search:
+        for word in search.split():
+            query = query.filter(Product.name.ilike(f"%{word}%"))
     response = {
         "products": []
     }
-    for i in Product.query.where(Product.in_store).all():
+    for i in query.all():
         dict_product = i.to_dict()
         cartStuff = CartStuff.query.where(CartStuff.product_id == i.id).where(CartStuff.user_id == 1).first()
         if cartStuff:

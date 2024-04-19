@@ -41,7 +41,8 @@ def add_order():
         new_stuff = OrderStuff(**i)
         CartStuff.query.where(CartStuff.product_id == new_stuff.product_id).where(CartStuff.user_id == 1).delete()
         product = Product.query.get(new_stuff.product_id)
-        product.available -= 1
+        if product.available > 0:
+            product.available -= 1
 
         new_stuff.order_id = new_order.id
         new_stuff.price = product.sale_price
