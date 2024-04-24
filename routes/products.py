@@ -18,15 +18,16 @@ def get_products():
     }
     for i in query.all():
         dict_product = i.to_dict()
-        cartStuff = CartStuff.query.where(CartStuff.product_id == i.id).where(CartStuff.user_id == 1).first()
-        if cartStuff:
-            in_cart = cartStuff.quantity
-            dict_product['cart_stuff_id'] = cartStuff.id
-        else:
-            in_cart = 0
-        dict_product['in_cart'] = in_cart
+        if request.args.get('public'):
+            cartStuff = CartStuff.query.where(CartStuff.product_id == i.id).where(CartStuff.user_id == 1).first()
+            if cartStuff:
+                in_cart = cartStuff.quantity
+                dict_product['cart_stuff_id'] = cartStuff.id
+            else:
+                in_cart = 0
+            dict_product['in_cart'] = in_cart
         response["products"].append(dict_product)
-    return jsonify({'data': response})
+    return jsonify(response)
 
 
 @productsBlueprint.route('/<int:product_id>', methods=['GET'])

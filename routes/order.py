@@ -45,7 +45,7 @@ def add_order():
             product.available -= 1
 
         new_stuff.order_id = new_order.id
-        new_stuff.price = product.sale_price
+        new_stuff.price = product.price
         if promo_code:
             new_stuff.price = subtract_percent(new_stuff.price, PromoCode.query.where(PromoCode.name == promo_code).first().percent)
         new_stuff.name = product.name
