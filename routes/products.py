@@ -8,7 +8,7 @@ productsBlueprint = Blueprint('products', __name__, url_prefix='/products')
 
 @productsBlueprint.route('/', methods=['GET'])
 def get_products():
-    query = Product.query.where(Product.in_store)
+    query = Product.query.where(Product.in_store).where(Product.available > 0)
     search = request.args.get('q')
     if search:
         for word in search.split():

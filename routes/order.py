@@ -12,8 +12,21 @@ ordersBlueprint = Blueprint('orders', __name__, url_prefix='/orders')
 
 @ordersBlueprint.route('/', methods=['GET'])
 def get_orders():
-    orders = Order.query.all()
-    return jsonify({'orders': [order.to_dict() for order in orders]})
+    orders = Order.query.where(Order.user_id == 1).all()
+    orders = [i.to_dict() for i in orders]
+    for index, i in enumerate(orders):
+        statuses = []
+        stuffStatuses = {
+            'new': 1,
+            'confirm': 2,
+            'finished': 3
+        }
+        orders[index]['stuff'] = [i.to_dict() for i in OrderStuff.query.where(OrderStuff.order_id == i['id']).all()]
+        for st in orders[index]['stuff']:
+            statuses.append(stuffStatuses[st['status']])
+        invStuffStatuses = {v: k for k, v in stuffStatuses.items()}
+        orders[index]['status'] = invStuffStatuses[min(statuses)]
+    return jsonify({'orders': list(reversed(sorted(orders, key=lambda order: order['id'])))})
 
 
 @ordersBlueprint.route('/<int:order_id>', methods=['GET'])
@@ -42,7 +55,7 @@ def add_order():
         CartStuff.query.where(CartStuff.product_id == new_stuff.product_id).where(CartStuff.user_id == 1).delete()
         product = Product.query.get(new_stuff.product_id)
         if product.available > 0:
-            product.available -= 1
+            product.available -= new_stuff.quantity
 
         new_stuff.order_id = new_order.id
         new_stuff.price = product.price
